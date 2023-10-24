@@ -1,0 +1,4 @@
+name = "JLisp"
+uuid = "458e70cc-0df5-4412-93d7-e47275c28410"
+authors = ["bas buller <bas.buller@tractable.ai>"]
+version = "0.1.0"

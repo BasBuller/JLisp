@@ -6,6 +6,7 @@
     SLeftParen
     SRightParen
     SComment
+    SQuote
 end
 function stringToSToken(str::String)
     symb = Symbol(str)
@@ -28,13 +29,14 @@ subsequent_identifier_regex = "($initial_identifier_regex|[0-9]|[+-.@])"
 peculiar_identifier_regex = "([+\\-.]|\\.\\.\\.)"
 identifier_regex = "$initial_identifier_regex$subsequent_identifier_regex*|$peculiar_identifier_regex"
 TOKEN_STRINGS = [
-    "?<SBool>#[tf]",                        # SBool
-    "?<SNumber>[0-9]+",                     # SNumber
-    "?<SIdentifier>$identifier_regex",      # SIdentifier
-    "?<SString>\".*\"",                     # SString
-    "?<SLeftParen>\\(",                     # SLeftParen
-    "?<SRightParen>\\)",                    # SRightParen
-    "?<SComment>;[^\\n]*",                  # SComment
+    "?<SBool>#[tf]",                       
+    "?<SNumber>[0-9]+",                    
+    "?<SIdentifier>$identifier_regex",     
+    "?<SString>\".*\"",                    
+    "?<SLeftParen>\\(",                    
+    "?<SRightParen>\\)",                   
+    "?<SComment>;[^\\n]*",                 
+    "?<SQuote>\\'",
 ]
 
 mutable struct Lexer

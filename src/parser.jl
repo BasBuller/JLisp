@@ -63,3 +63,5 @@ function parseQuote(parser::Parser) end
 @assert parseExpr(Parser("123")) == 123
 @assert parseExpr(Parser("\"BaasB is lekker\"")) == "BaasB is lekker"
 @assert parseExpr(Parser("(+ 1 2)")) == Pair(:+, Pair(1, Pair(2, nothing)))
+@assert parseExpr(Parser("(+ 1 (- 2 3))")) == Pair(:+, Pair(1, Pair(Pair(:-, Pair(2, Pair(3, nothing))), nothing)))
+

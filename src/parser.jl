@@ -55,7 +55,10 @@ function parseIdentifier(currentToken::Token)
         return currentToken.val[2:end-1]
     end
 end
-function parseQuote(parser::Parser) end
+function parseQuote(parser::Parser)
+    cdr = parseExpr(parser)
+    return Pair(:quote, cdr)
+end
 
 @assert parseExpr(Parser("abc")) == :abc
 @assert parseExpr(Parser("#t")) == true
@@ -64,4 +67,5 @@ function parseQuote(parser::Parser) end
 @assert parseExpr(Parser("\"BaasB is lekker\"")) == "BaasB is lekker"
 @assert parseExpr(Parser("(+ 1 2)")) == Pair(:+, Pair(1, Pair(2, nothing)))
 @assert parseExpr(Parser("(+ 1 (- 2 3))")) == Pair(:+, Pair(1, Pair(Pair(:-, Pair(2, Pair(3, nothing))), nothing)))
-
+@assert parseExpr(Parser("'1")) == Pair(:quote, 1)
+@assert parseExpr(Parser("'(+ 1 2)")) == Pair(:quote, Pair(:+, Pair(1, Pair(2, nothing))))

@@ -18,9 +18,9 @@ function evalExpr(expr::SchemeObject, env::Environment)
     elseif isQuoted(expr)
         return expr.second
     # elseif isAssignment(expr)
-    #     ...
+    #     assignVariable(expr, env)
     # elseif isDefinition(expr)
-    #     ...
+    #     defineVariable(expr, env)
     # elseif isIf(expr)
     #     ...
     # elseif isCond(expr)

@@ -1,12 +1,14 @@
 SchemeObject = Union{Number, String, Bool, Symbol, Pair}
 
+isTaggedList(expr::SchemeObject, tag::Symbol) = isa(expr, Pair) & (expr.first == tag)
+
 isSelfEvaluating(expr::SchemeObject) = isa(expr, Number) | isa(expr, String) | isa(expr, Bool)
 isVariable(expr::SchemeObject) = isa(expr, Symbol)
-isQuoted(expr::SchemeObject) = isa(expr, Pair) & (expr.first == :quote)
-function isAssignment(expr::SchemeObject) end
-function isDefinition(expr::SchemeObject) end
-function isIf(expr::SchemeObject) end
-function isCond(expr::SchemeObject) end
-function isLet(expr::SchemeObject) end
-function isBegin(expr::SchemeObject) end
-function isApplication(expr::SchemeObject) end
+isQuoted(expr::SchemeObject) = isTaggedList(expr, :quote)
+isAssignment(expr::SchemeObject) = isTaggedList(expr, :set!)
+isDefinition(expr::SchemeObject) = isTaggedList(expr, :define)
+isIf(expr::SchemeObject) = isTaggedList(expr, :if)
+isCond(expr::SchemeObject) = isTaggedList(expr, :cond)
+isLet(expr::SchemeObject) = isTaggedList(expr, :let)
+isBegin(expr::SchemeObject) = isTaggedList(expr, :let)
+isApplication(expr::SchemeObject) = isa(expr, Pair)

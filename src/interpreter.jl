@@ -14,15 +14,20 @@ function evalExpr(expr::SchemeObject, env::Environment)
     if isSelfEvaluating(expr)
         return expr
     elseif isVariable(expr)
-        return getVariable(env, expr)
+        return getVariable(expr, env)
     elseif isQuoted(expr)
         return expr.second
-    # elseif isAssignment(expr)
-    #     assignVariable(expr, env)
-    # elseif isDefinition(expr)
-    #     defineVariable(expr, env)
-    # elseif isIf(expr)
-    #     ...
+    elseif isSetVariable(expr)
+        return setVariable(expr.second, env)
+    elseif isDefinition(expr)
+        return defineVariable(expr.second, env)
+    elseif isIf(expr)
+        bool = evalExpr(ifPredicate(expr))
+        if bool
+            return ifConsequent(expr)
+        else
+            return ifAlternative(expr)
+        end
     # elseif isCond(expr)
     #     ...
     # elseif isLet(expr)

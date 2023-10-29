@@ -21,9 +21,13 @@ function evalExpr(expr::SchemeObject, env::Environment)
     elseif isQuoted(expr)
         return expr.second
     elseif isSetVariable(expr)
-        return setVariable(expr, env)
+        key = expr.second.first
+        value = evalExpr(expr.second.second.first, env)
+        return setVariable(key, value, env)
     elseif isDefinition(expr)
-        return defineVariable(expr, env)
+        key = expr.second.first
+        value = evalExpr(expr.second.second.first, env)
+        return defineVariable(key, value, env)
     elseif isIf(expr)
         bool = evalExpr(ifPredicate(expr), env)
         if bool
@@ -34,11 +38,11 @@ function evalExpr(expr::SchemeObject, env::Environment)
     elseif isCond(expr)
         return evalExpr(convertCondToIfStatements(expr), env)
     elseif isLet(expr)
-        throw(UnimplementedError("let construct"))
+        error("UNIMPLEMENTED: let construct")
     elseif isLambda(expr)
         return Lambda(expr, env)
     elseif isBegin(expr)
-        throw(UnimplementedError("begin construct"))
+        error("UNIMPLEMENTED: begin construct")
     elseif isApplication(expr)
         return evalFunction(expr, env)
     else
@@ -46,10 +50,21 @@ function evalExpr(expr::SchemeObject, env::Environment)
     end
 end
 
-# TODO: Deal with Lambdas
 function evalFunction(expr::SchemeObject, env::Environment)
     func = getVariable(expr.first, env)
-    env = initSubEnvironment(env)
     args = mapList(expr.second, x -> evalExpr(x, env)) |> toArray
-    return func(args...)
+    
+    if typeof(func) == Lambda
+        env = initSubEnvironment(func.env)
+        identifiers = toArray(func.args)
+        for (identifier, value) in zip(identifiers, args)
+            env.symbolLut[identifier] = value
+        end
+        return evalExpr(func.body, env)
+    elseif typeof(func) <: Function
+        env = initSubEnvironment(env)
+        return func(args...)
+    else
+        error("Function evaluation failed")
+    end
 end

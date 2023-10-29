@@ -9,7 +9,8 @@ include("interpreter.jl")
 include("utils.jl")
 
 env = initTopEnvironment()
-evalExpr(Parser("(+ 1 (* 2 3))") |> parseExpr, env) |> formatExpr |> println
+evalExpr(Parser("(define square (lambda (x) (* x x)))") |> parseExpr, env)
+evalExpr(Parser("(square 2)") |> parseExpr, env) |> println
 
 # evalExpr(Parser("(add 1 2)) |> parseExpr, env) |> formatExpr |> println
 # evalExpr(Parser("(define (add x y) (+ x y))") |> parseExpr, env)

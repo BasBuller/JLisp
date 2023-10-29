@@ -1,5 +1,6 @@
 include("expressions.jl")
 
+# TODO: Implement set-car! & set-cdr!
 lazyUnimplementedThrow(msg::String) = () -> error("UNIMPLEMENTED: " * msg)
 nativeFunctions::Vector{Pair{Symbol, Function}} = [
     # Maths
@@ -38,8 +39,9 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
 ]
 
 # Constructors and initialisation of environment
+const SchemeState = Union{SchemeObject, Function}
 struct Environment
-    symbolLut::Dict{Symbol, Union{SchemeObject, Function}}
+    symbolLut::Dict{Symbol, SchemeState}
     outerEnvironment::Union{Environment, Nothing}
 end
 initTopEnvironment() = Environment(Dict(nativeFunctions), nothing)
@@ -56,10 +58,7 @@ function getVariable(key::Symbol, env::Environment)
     end
 end
 
-function setVariable(expr::SchemeObject, env::Environment)
-    expr = expr.second
-    key = expr.first
-    value = expr.second.first
+function setVariable(key::Symbol, value::SchemeState, env::Environment)
     if !haskey(env, key)
         error("Setting undefined variable")
     else
@@ -68,10 +67,7 @@ function setVariable(expr::SchemeObject, env::Environment)
     end
 end
 
-function defineVariable(expr::SchemeObject, env::Environment)
-    expr = expr.second
-    key = expr.first
-    value = expr.second.first
+function defineVariable(key::Symbol, value::SchemeState, env::Environment)
     push!(env.symbolLut, key => value)
     return nothing
 end

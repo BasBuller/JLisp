@@ -1,13 +1,10 @@
 include("expressions.jl")
 
-NoOp(args...) = nothing
-
 nativeFunctions::Vector{Pair{Symbol, Function}} = [
-    # Comparison
+    # Maths
     :(=) => ==,
     :> => >,
     :< => <,
-    # Maths
     :+ => +,
     :* => *,
     :- => -,
@@ -21,22 +18,22 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     Symbol("char?") => x -> isa(x, Char),
     Symbol("string?") => x -> isa(x, String),
     Symbol("pair?") => x -> isa(x, Pair),
-    Symbol("procedure?") => isApplication,
-    Symbol("eq?") => NoOp,
+    Symbol("procedure?") => isa(x, Pair),
+    Symbol("eq?") => error("'eq?' not implemented yet because I am lazy."),
     # Casting
-    Symbol("char->integer") => NoOp,
-    Symbol("integer->char") => NoOp,
-    Symbol("number->string") => NoOp,
-    Symbol("string->number") => NoOp,
-    Symbol("symbol->string") => NoOp,
-    Symbol("string->symbol") => NoOp,
+    Symbol("char->integer") => error("'char->integer' not yet implemented, chars not supported yet."),
+    Symbol("integer->char") => error("'integer->char' not yet implemented, chars not supported yet."),
+    Symbol("number->string") => string,
+    Symbol("string->number") => x -> parse(Int, x),
+    Symbol("symbol->string") => string,
+    Symbol("string->symbol") => Symbol,
     # Basic list ops
-    Symbol("cons") => NoOp,
-    Symbol("car") => NoOp,
-    Symbol("cdr") => NoOp,
-    Symbol("set-car!") => NoOp,
-    Symbol("set-cdr!") => NoOp,
-    Symbol("list") => NoOp,
+    Symbol("cons") => Pair,
+    Symbol("car") => x -> x.first,
+    Symbol("cdr") => x -> x.second,
+    Symbol("set-car!") => error("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor."),
+    Symbol("set-cdr!") => error("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor."),
+    Symbol("list") => x -> x.second,
 ]
 
 # Constructors and initialisation of environment
@@ -77,51 +74,3 @@ function defineVariable(expr::SchemeObject, env::Environment)
     push!(env.symbolLut, key => value)
     return nothing
 end
-
-
-# // Insert symbols
-# try state.putSymbol("quote");
-# try state.putSymbol("define");
-# try state.putSymbol("set!");
-# try state.putSymbol("ok");
-# try state.putSymbol("if");
-
-# // Add constant objects
-# try state.putConstant("true", Object{ .boolean = true });
-# try state.putConstant("false", Object{ .boolean = false });
-# try state.putConstant("emptylist", Object{ .emptyList = true });
-
-# // Add procedures
-# try state.addPrimitiveProc("null?", &isNullProc);
-# try state.addPrimitiveProc("boolean?", &isBooleanProc);
-# try state.addPrimitiveProc("symbol?", &isSymbolProc);
-# try state.addPrimitiveProc("integer?", &isIntegerProc);
-# try state.addPrimitiveProc("char?", &isCharProc);
-# try state.addPrimitiveProc("string?", &isStringProc);
-# try state.addPrimitiveProc("pair?", &isPairProc);
-# try state.addPrimitiveProc("procedure?", &isProcedureProc);
-
-# // try state.addPrimitiveProc("char->integer", &charToIntegerProc);
-# // try state.addPrimitiveProc("integer->char", &integerToCharProc);
-# // try state.addPrimitiveProc("number->string", &numberToStringProc);
-# // try state.addPrimitiveProc("string->number", &stringToNumberProc);
-# // try state.addPrimitiveProc("symbol->string", &symbolToStringProc);
-# // try state.addPrimitiveProc("string->symbol", &stringToSymbolProc);
-
-# try state.addPrimitiveProc("+", &addProc);
-# try state.addPrimitiveProc("-", &subProc);
-# try state.addPrimitiveProc("*", &mulProc);
-# try state.addPrimitiveProc("quotient", &quotientProc);
-# try state.addPrimitiveProc("remainder", &remainderProc);
-# try state.addPrimitiveProc("=", &isNumberEqualProc);
-# try state.addPrimitiveProc("<", &isLessThanProc);
-# try state.addPrimitiveProc(">", &isGreaterThanProc);
-
-# // try state.addPrimitiveProc("cons", &consProc);
-# // try state.addPrimitiveProc("car", &carProc);
-# // try state.addPrimitiveProc("cdr", &cdrProc);
-# // try state.addPrimitiveProc("set-car!", &setCarProc);
-# // try state.addPrimitiveProc("set-cdr!", &setCdrProc);
-# // try state.addPrimitiveProc("list", &listProc);
-
-# // try state.addPrimitiveProc("eq?", &isEqProc);

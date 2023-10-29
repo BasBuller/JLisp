@@ -24,6 +24,22 @@ function makeList(args...)
     end
 end
 
+function toArray(list::Pair)
+    arr = []
+    while !isnothing(list)
+        push!(arr, list.first)
+        list = list.second
+    end
+    return arr
+end
+
+function mapList(list::Pair, func::Function)
+    first = func(list.first)
+    second = mapList(list.second, func)
+    return Pair(first, second)
+end
+mapList(_::Nothing, _::Function) = nothing
+
 getUnitListValue(expr::Pair) = isnothing(expr.second) ? expr.first : expr
 
 function parsePrint(expr)

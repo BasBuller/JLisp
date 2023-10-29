@@ -1,11 +1,63 @@
 include("expressions.jl")
 
+NoOp(args...) = nothing
 
-const Environment = Dict{Symbol, Union{SchemeObject, Function}}
+nativeFunctions::Vector{Pair{Symbol, Function}} = [
+    # Comparison
+    :(=) => ==,
+    :> => >,
+    :< => <,
+    # Maths
+    :+ => +,
+    :* => *,
+    :- => -,
+    :quotient => ÷,
+    :remainder => %,
+    # Type checking in Scheme
+    Symbol("null?") => isnothing,
+    Symbol("boolean?") => x -> isa(x, Bool),
+    Symbol("symbol?") => x -> isa(x, Symbol),
+    Symbol("integer?") => x -> isa(x, Int),
+    Symbol("char?") => x -> isa(x, Char),
+    Symbol("string?") => x -> isa(x, String),
+    Symbol("pair?") => x -> isa(x, Pair),
+    Symbol("procedure?") => isApplication,
+    Symbol("eq?") => NoOp,
+    # Casting
+    Symbol("char->integer") => NoOp,
+    Symbol("integer->char") => NoOp,
+    Symbol("number->string") => NoOp,
+    Symbol("string->number") => NoOp,
+    Symbol("symbol->string") => NoOp,
+    Symbol("string->symbol") => NoOp,
+    # Basic list ops
+    Symbol("cons") => NoOp,
+    Symbol("car") => NoOp,
+    Symbol("cdr") => NoOp,
+    Symbol("set-car!") => NoOp,
+    Symbol("set-cdr!") => NoOp,
+    Symbol("list") => NoOp,
+]
 
-function getVariable(expr::Symbol, env::Environment)
-    return env[expr]
+# Constructors and initialisation of environment
+struct Environment
+    symbolLut::Dict{Symbol, Union{SchemeObject, Function}}
+    outerEnvironment::Union{Environment, Nothing}
 end
+initTopEnvironment() = Environment(Dict(nativeFunctions), nothing)
+initSubEnvironment(outerEnv::Environment) = Environment(Dict([]), outerEnv)
+
+# Environment API functions
+function getVariable(key::Symbol, env::Environment)
+    if haskey(env.symbolLut, key)
+        return env.symbolLut[key]
+    elseif !isnothing(env.outerEnvironment)
+        return getVariable(key, env.outerEnvironment)
+    else
+        error("Symbol not defined in any namespace")
+    end
+end
+
 function setVariable(expr::SchemeObject, env::Environment)
     expr = expr.second
     key = expr.first
@@ -13,25 +65,17 @@ function setVariable(expr::SchemeObject, env::Environment)
     if !haskey(env, key)
         error("Setting undefined variable")
     else
-        push!(env, key => value)
+        push!(env.symbolLut, key => value)
         return nothing
     end
 end
+
 function defineVariable(expr::SchemeObject, env::Environment)
     expr = expr.second
     key = expr.first
     value = expr.second.first
-    push!(env, key => value)
+    push!(env.symbolLut, key => value)
     return nothing
-end
-
-function initTopEnvironment()
-    env = Environment([
-        :(==) => ==,
-        :> => >,
-        :< => <,
-    ])
-    return env
 end
 
 

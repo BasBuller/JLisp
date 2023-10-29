@@ -1,8 +1,7 @@
 include("expressions.jl")
 
 
-# const Environment = Dict{Symbol, SchemeObject}
-const Environment = Dict
+const Environment = Dict{Symbol, Union{SchemeObject, Function}}
 
 function getVariable(expr::Symbol, env::Environment)
     return env[expr]

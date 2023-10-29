@@ -4,12 +4,12 @@ include("environment.jl")
 """
 This is a lambda
 """
-struct Procedure
+struct Lambda <: Function
     args::Pair
     body::SchemeObject
     env::Environment
     
-    function Procedure(expr::SchemeObject, env::Environment)
+    function Lambda(expr::SchemeObject, env::Environment)
         args = expr.second.first
         body = expr.second.second.first
         return new(args, body, env)
@@ -41,7 +41,7 @@ function evalExpr(expr::SchemeObject, env::Environment)
     # elseif isLet(expr)
     #     ...
     elseif isLambda(expr)
-        return Procedure(expr, env)
+        return Lambda(expr, env)
     # elseif isBegin(expr)
     #     ...
     elseif isApplication(expr)

@@ -33,12 +33,12 @@ function evalExpr(expr::SchemeObject, env::Environment)
         end
     elseif isCond(expr)
         return evalExpr(convertCondToIfStatements(expr), env)
-    # elseif isLet(expr)
-    #     ...
+    elseif isLet(expr)
+        throw(UnimplementedError("let construct"))
     elseif isLambda(expr)
         return Lambda(expr, env)
-    # elseif isBegin(expr)
-    #     ...
+    elseif isBegin(expr)
+        throw(UnimplementedError("begin construct"))
     elseif isApplication(expr)
         return evalFunction(expr, env)
     else

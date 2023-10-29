@@ -1,5 +1,6 @@
 include("expressions.jl")
 
+lazyUnimplementedThrow(msg::String) = () -> error("UNIMPLEMENTED: " * msg)
 nativeFunctions::Vector{Pair{Symbol, Function}} = [
     # Maths
     :(=) => ==,
@@ -18,21 +19,21 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     Symbol("char?") => x -> isa(x, Char),
     Symbol("string?") => x -> isa(x, String),
     Symbol("pair?") => x -> isa(x, Pair),
-    Symbol("procedure?") => isa(x, Pair),
-    Symbol("eq?") => error("'eq?' not implemented yet because I am lazy."),
+    Symbol("procedure?") => x -> isa(x, Pair),
+    Symbol("eq?") => ===,
     # Casting
-    Symbol("char->integer") => error("'char->integer' not yet implemented, chars not supported yet."),
-    Symbol("integer->char") => error("'integer->char' not yet implemented, chars not supported yet."),
+    Symbol("char->integer") => lazyUnimplementedThrow("'char->integer' not yet implemented, chars not supported yet."),
+    Symbol("integer->char") => lazyUnimplementedThrow("'integer->char' not yet implemented, chars not supported yet."),
     Symbol("number->string") => string,
     Symbol("string->number") => x -> parse(Int, x),
     Symbol("symbol->string") => string,
-    Symbol("string->symbol") => Symbol,
+    Symbol("string->symbol") => x -> Symbol(x),
     # Basic list ops
-    Symbol("cons") => Pair,
+    Symbol("cons") => (x, y) -> Pair(x, y),
     Symbol("car") => x -> x.first,
     Symbol("cdr") => x -> x.second,
-    Symbol("set-car!") => error("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor."),
-    Symbol("set-cdr!") => error("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor."),
+    Symbol("set-car!") => lazyUnimplementedThrow("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor."),
+    Symbol("set-cdr!") => lazyUnimplementedThrow("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor."),
     Symbol("list") => x -> x.second,
 ]
 

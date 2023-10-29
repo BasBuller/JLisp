@@ -59,7 +59,7 @@ function getVariable(key::Symbol, env::Environment)
 end
 
 function setVariable(key::Symbol, value::SchemeState, env::Environment)
-    if !haskey(env, key)
+    if !haskey(env.symbolLut, key)
         error("Setting undefined variable")
     else
         push!(env.symbolLut, key => value)

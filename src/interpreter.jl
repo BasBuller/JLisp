@@ -51,7 +51,7 @@ function evalExpr(expr::SchemeObject, env::Environment)
 end
 
 function evalFunction(expr::SchemeObject, env::Environment)
-    func = getVariable(expr.first, env)
+    func = evalExpr(expr.first, env)
     args = mapList(expr.second, x -> evalExpr(x, env)) |> toArray
     
     if typeof(func) == Lambda

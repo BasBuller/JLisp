@@ -30,11 +30,7 @@ function evalExpr(expr::SchemeObject, env::Environment)
         return defineVariable(key, value, env)
     elseif isIf(expr)
         bool = evalExpr(ifPredicate(expr), env)
-        if bool
-            return ifConsequent(expr)
-        else
-            return ifAlternative(expr)
-        end
+        return bool ? ifConsequent(expr) : ifAlternative(expr)
     elseif isCond(expr)
         return evalExpr(convertCondToIfStatements(expr), env)
     elseif isLet(expr)

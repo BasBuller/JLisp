@@ -1,6 +1,6 @@
-include("expressions.jl")
 include("environment.jl")
 include("parser.jl")
+include("utils.jl")
 
 struct Lambda <: Function
     args::Pair
@@ -12,6 +12,12 @@ struct Lambda <: Function
         body = expr.second.second.first
         return new(args, body, env)
     end
+end
+
+function formatExpr(proc::Lambda)
+    args = formatExpr(proc.args)
+    body = formatExpr(proc.body)
+    return "(lambda $args $body)"
 end
 
 function evalExpr(expr::SchemeObject, env::Environment)

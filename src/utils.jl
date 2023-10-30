@@ -9,11 +9,6 @@ function formatExpr(list::Pair)
     string = string * "$val)"
     return string
 end
-function formatExpr(proc::Lambda)
-    args = formatExpr(proc.args)
-    body = formatExpr(proc.body)
-    return "(lambda $args $body)"
-end
 formatExpr(expr) = expr
 
 function makeList(args...)

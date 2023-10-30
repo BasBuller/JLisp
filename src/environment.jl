@@ -12,6 +12,7 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     :- => -,
     :quotient => ÷,
     :remainder => %,
+
     # Type checking in Scheme
     Symbol("null?") => isnothing,
     Symbol("boolean?") => x -> isa(x, Bool),
@@ -21,7 +22,9 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     Symbol("string?") => x -> isa(x, String),
     Symbol("pair?") => x -> isa(x, Pair),
     Symbol("procedure?") => x -> isa(x, Pair),
+    Symbol("equal?") => ==,
     Symbol("eq?") => ===,
+
     # Casting
     Symbol("char->integer") => lazyUnimplementedThrow("'char->integer' not yet implemented, chars not supported yet."),
     Symbol("integer->char") => lazyUnimplementedThrow("'integer->char' not yet implemented, chars not supported yet."),
@@ -29,6 +32,7 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     Symbol("string->number") => x -> parse(Int, x),
     Symbol("symbol->string") => string,
     Symbol("string->symbol") => x -> Symbol(x),
+
     # Basic list ops
     Symbol("cons") => (x, y) -> Pair(x, y),
     Symbol("car") => x -> x.first,
@@ -36,6 +40,9 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     Symbol("set-car!") => lazyUnimplementedThrow("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor."),
     Symbol("set-cdr!") => lazyUnimplementedThrow("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor."),
     Symbol("list") => x -> x.second,
+    
+    # Utilities
+    :display => x -> x |> formatExpr |> println,
 ]
 
 # Constructors and initialisation of environment

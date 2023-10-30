@@ -9,6 +9,7 @@ include("interpreter.jl")
 include("utils.jl")
 
 env = initTopEnvironment()
+evalExpr(Parser("(display '(5 6))") |> parseExpr, env)
 evalExpr(Parser("'(1 2 3)") |> parseExpr, env) |> formatExpr |> println
 evalExpr(Parser("(if #t correct incorrect)") |> parseExpr, env) |> formatExpr |> println
 evalExpr(Parser("(if #f incorrect correct)") |> parseExpr, env) |> formatExpr |> println

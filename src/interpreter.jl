@@ -1,5 +1,6 @@
 include("expressions.jl")
 include("environment.jl")
+include("parser.jl")
 
 struct Lambda <: Function
     args::Pair
@@ -64,3 +65,9 @@ function evalFunction(expr::SchemeObject, env::Environment)
         error("Function evaluation failed")
     end
 end
+
+function interpretCode(codeString::String, env::Environment)
+    expr = Parser(codeString) |> parseExpr
+    evalExpr(expr, env)
+end
+interpretCode(codeString::String) = interpretCode(codeString, initTopEnvironment())

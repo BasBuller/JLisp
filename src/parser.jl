@@ -12,7 +12,7 @@ getToken(parser::Parser) = getToken(parser.lexer)
 
 function nextToken(parser::Parser)
     token = getToken(parser)
-    while !isnothing(token) & (token.token_type == SComment)
+    while !isnothing(token) && (token.token_type == SComment)
         token = getToken(parser)
     end
     return token
@@ -20,7 +20,7 @@ end
 
 function parseExpr(parser::Parser)
     curToken = nextToken(parser)
-    return parseNode(curToken, parser)
+    return !isnothing(curToken) ? parseNode(curToken, parser) : curToken
 end
 
 function parseNode(curToken::Token, parser::Parser)

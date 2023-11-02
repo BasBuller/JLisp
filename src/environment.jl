@@ -1,5 +1,12 @@
 include("expressions.jl")
 
+function setCar!(pair::SchemeObject, value::SchemeObject)
+    error("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor.")
+end
+function setCdr!(pair::SchemeObject, value::SchemeObject)
+    error("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor.")
+end
+
 # TODO: Implement set-car! & set-cdr!
 lazyUnimplementedThrow(msg::String) = () -> error("UNIMPLEMENTED: " * msg)
 nativeFunctions::Vector{Pair{Symbol, Function}} = [
@@ -37,8 +44,8 @@ nativeFunctions::Vector{Pair{Symbol, Function}} = [
     Symbol("cons") => (x, y) -> Pair(x, y),
     Symbol("car") => x -> x.first,
     Symbol("cdr") => x -> x.second,
-    Symbol("set-car!") => lazyUnimplementedThrow("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor."),
-    Symbol("set-cdr!") => lazyUnimplementedThrow("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor."),
+    Symbol("set-car!") => setCar!,
+    Symbol("set-cdr!") => setCdr!,
     Symbol("list") => x -> x.second,
     
     # Utilities

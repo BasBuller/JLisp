@@ -3,7 +3,7 @@ include("parser.jl")
 include("utils.jl")
 
 struct Lambda <: Function
-    args::Pair
+    args::SPair
     body::SchemeObject
     env::Environment
     

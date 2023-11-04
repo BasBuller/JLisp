@@ -40,7 +40,7 @@ function parseList(parser::Parser)
     else
         car = parseNode(token, parser)  # Want this to start with previously parsed token...
         cdr = parseList(parser)
-        return Pair(car, cdr)
+        return SPair(car, cdr)
     end
 end
 function parseIdentifier(currentToken::Token)
@@ -56,7 +56,7 @@ function parseIdentifier(currentToken::Token)
 end
 function parseQuote(parser::Parser)
     cdr = parseExpr(parser)
-    return Pair(:quote, cdr)
+    return SPair(:quote, cdr)
 end
 
 @assert parseExpr(Parser("abc")) == :abc
@@ -64,7 +64,7 @@ end
 @assert parseExpr(Parser("#f")) == false
 @assert parseExpr(Parser("123")) == 123
 @assert parseExpr(Parser("\"BaasB is lekker\"")) == "BaasB is lekker"
-@assert parseExpr(Parser("(+ 1 2)")) == Pair(:+, Pair(1, Pair(2, nothing)))
-@assert parseExpr(Parser("(+ 1 (- 2 3))")) == Pair(:+, Pair(1, Pair(Pair(:-, Pair(2, Pair(3, nothing))), nothing)))
-@assert parseExpr(Parser("'1")) == Pair(:quote, 1)
-@assert parseExpr(Parser("'(+ 1 2)")) == Pair(:quote, Pair(:+, Pair(1, Pair(2, nothing))))
+@assert parseExpr(Parser("(+ 1 2)")) == SPair(:+, SPair(1, SPair(2, nothing)))
+@assert parseExpr(Parser("(+ 1 (- 2 3))")) == SPair(:+, SPair(1, SPair(SPair(:-, SPair(2, SPair(3, nothing))), nothing)))
+@assert parseExpr(Parser("'1")) == SPair(:quote, 1)
+@assert parseExpr(Parser("'(+ 1 2)")) == SPair(:quote, SPair(:+, SPair(1, SPair(2, nothing))))

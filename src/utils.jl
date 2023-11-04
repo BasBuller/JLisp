@@ -1,4 +1,4 @@
-function formatExpr(list::Pair)
+function formatExpr(list::SPair)
     string = "("
     while !isnothing(list.second)
         val = formatExpr(list.first)
@@ -13,13 +13,13 @@ formatExpr(expr) = expr
 
 function makeList(args...)
     if length(args) == 1
-        return Pair(args[1], nothing)
+        return SPair(args[1], nothing)
     else
-        return Pair(args[1], makeList(args[2:end]...))
+        return SPair(args[1], makeList(args[2:end]...))
     end
 end
 
-function toArray(list::Pair)
+function toArray(list::SPair)
     arr = []
     while !isnothing(list)
         push!(arr, list.first)
@@ -28,14 +28,14 @@ function toArray(list::Pair)
     return arr
 end
 
-function mapList(list::Pair, func::Function)
+function mapList(list::SPair, func::Function)
     first = func(list.first)
     second = mapList(list.second, func)
-    return Pair(first, second)
+    return SPair(first, second)
 end
 mapList(_::Nothing, _::Function) = nothing
 
-getUnitListValue(expr::Pair) = isnothing(expr.second) ? expr.first : expr
+getUnitListValue(expr::SPair) = isnothing(expr.second) ? expr.first : expr
 
 function parsePrint(expr)
     parsedExpr = Parser(expr) |> parseExpr

@@ -1,6 +1,13 @@
-SchemeObject = Union{Number, String, Bool, Symbol, Pair}
+mutable struct SPair{U, V}
+    first::U
+    second::V
+end
+isequal(p::SPair, q::SPair) = isequal(p.first, q.first) & isequal(p.second, q.second)
+Base.:(==)(p::SPair, q::SPair) = Base.:(==)(p.first, q.first) & Base.:(==)(p.second, q.second)
 
-isTaggedList(expr::SchemeObject, tag::Symbol) = isa(expr, Pair) & (expr.first == tag)
+SchemeObject = Union{Number, String, Bool, Symbol, SPair}
+
+isTaggedList(expr::SchemeObject, tag::Symbol) = isa(expr, SPair) & (expr.first == tag)
 
 isSelfEvaluating(expr::SchemeObject) = isa(expr, Number) | isa(expr, String) | isa(expr, Bool)
 isVariable(expr::SchemeObject) = isa(expr, Symbol)
@@ -12,14 +19,14 @@ isCond(expr::SchemeObject) = isTaggedList(expr, :cond)
 isLet(expr::SchemeObject) = isTaggedList(expr, :let)
 isLambda(expr::SchemeObject) = isTaggedList(expr, :lambda)
 isBegin(expr::SchemeObject) = isTaggedList(expr, :let)
-isApplication(expr::SchemeObject) = isa(expr, Pair)
+isApplication(expr::SchemeObject) = isa(expr, SPair)
 
 # If utilities
-ifPredicate(expr::Pair) = expr.second.first
-ifConsequent(expr::Pair) = expr.second.second.first
-ifAlternative(expr::Pair) = expr.second.second.second.first
+ifPredicate(expr::SPair) = expr.second.first
+ifConsequent(expr::SPair) = expr.second.second.first
+ifAlternative(expr::SPair) = expr.second.second.second.first
 
-function convertCondToIfStatements_(expr::Pair)
+function convertCondToIfStatements_(expr::SPair)
     leadCond = expr.first
     restConds = expr.second
     
@@ -57,4 +64,4 @@ becomes:
             (display "Positive")
             (display "Should not be reached))))
 """
-convertCondToIfStatements(expr::Pair) = convertCondToIfStatements_(expr.second)  # Remove cond tag
+convertCondToIfStatements(expr::SPair) = convertCondToIfStatements_(expr.second)  # Remove cond tag

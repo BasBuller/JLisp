@@ -1,10 +1,15 @@
 include("expressions.jl")
 
-function setCar!(pair::SchemeObject, value::SchemeObject)
-    error("'set-car!' not yet implemented, Julia Pairs are immutable so need to refactor.")
+function setCar!(pair::SchemeObject, carValue::SchemeObject)
+    setfield!(pair, :first, carValue)
 end
-function setCdr!(pair::SchemeObject, value::SchemeObject)
-    error("'set-cdr!' not yet implemented, Julia Pairs are immutable so need to refactor.")
+
+function setCdr!(pair::SchemeObject, cdrValue::SPair)
+    setfield!(pair, :second, cdrValue)
+end
+function setCdr!(pair::SchemeObject, cdrValue::SchemeObject)
+    cdrValue = SPair(cdrValue, nothing)
+    setCdr!(pair, cdrValue)
 end
 
 lazyUnimplementedThrow(msg::String) = () -> error("UNIMPLEMENTED: " * msg)

@@ -1,6 +1,6 @@
-mutable struct SPair{U, V}
-    first::U
-    second::V
+mutable struct SPair
+    first
+    second
 end
 isequal(p::SPair, q::SPair) = isequal(p.first, q.first) & isequal(p.second, q.second)
 Base.:(==)(p::SPair, q::SPair) = Base.:(==)(p.first, q.first) & Base.:(==)(p.second, q.second)
